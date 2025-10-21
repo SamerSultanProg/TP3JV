@@ -4,9 +4,7 @@ extends Node
 var current_state : BaseState
 var states : Dictionary = {}
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	# Pour ajouter les états, il suffit de les ajouter comme enfants de la machine à état
 	for child in get_children():
 		if child is BaseState:
 			states[child.name.to_lower()] = child
@@ -24,13 +22,11 @@ func _physics_process(delta: float) -> void:
 	if current_state:
 		current_state.physics_update(delta)
 
-# Fonction pour changer d'état
 func on_child_transition(state, new_state_name):
 	if state != current_state:
 		return
 	
 	var new_state = states.get(new_state_name.to_lower())
-	
 	if !new_state:
 		return
 		

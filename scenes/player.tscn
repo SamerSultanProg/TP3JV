@@ -231,7 +231,6 @@ script = ExtResource("1_onrkg")
 position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_2hs0m")
 animation = &"attack"
-autoplay = "idle"
 
 [node name="AttackTimer" type="Timer" parent="AnimatedSprite2D"]
 wait_time = 0.25
@@ -241,14 +240,18 @@ one_shot = true
 position = Vector2(-0.5, -4.25)
 shape = SubResource("RectangleShape2D_4flbx")
 
-[node name="StateMachine" type="Node" parent="."]
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("3_tuyoq")
+initial_state = NodePath("PlayerIdle")
 
-[node name="PlayerIdle" type="Node" parent="StateMachine"]
+[node name="PlayerIdle" type="Node" parent="StateMachine" node_paths=PackedStringArray("player")]
 script = ExtResource("4_fjrip")
+player = NodePath("../..")
 
-[node name="PlayerRun" type="Node" parent="StateMachine"]
+[node name="PlayerRun" type="Node" parent="StateMachine" node_paths=PackedStringArray("player")]
 script = ExtResource("5_smehm")
+player = NodePath("../..")
 
-[node name="PlayerAttack" type="Node" parent="StateMachine"]
+[node name="PlayerAttack" type="Node" parent="StateMachine" node_paths=PackedStringArray("player")]
 script = ExtResource("6_ur7pv")
+player = NodePath("../..")

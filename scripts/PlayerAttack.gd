@@ -2,55 +2,62 @@ class_name PlayerAttack
 extends BaseState
 
 @export var player : Player
-var anim_player : AnimationPlayer
-var dir : float = 0.0
+var anim_player
+var last_dir : float = 0.0
 var _connected := false
 
 func enter() -> void:
-	# Récupère l'AnimationPlayer du joueur (comme dans Idle/Run)
+	if player == null:
+		var sm := get_parent()
+		if sm and sm.get_parent() is Player:
+			player = sm.get_parent() as Player
+
 	anim_player = player.get_animation_player()
-	# Démarre l'anim d’attaque une seule fois
-	if anim_player:
-		# Assure que l'attaque NE BOUCLE PAS (au cas où)
-		if anim_player.has_animation("Attack"):
-			anim_player.play("Attack")
-		# On écoute la fin d’animation pour décider du prochain état
-		if not _connected:
-			anim_player.animation_finished.connect(_on_anim_finished)
-			_connected = true
-	
-	# On verrouille le déplacement horizontal pendant l'attaque
 	player.velocity.x = 0.0
+
+	if anim_player and anim_player.has_method("play"):
+		anim_player.play("attack")   # loop doit être OFF dans SpriteFrames
+
+	# Si tu utilises AnimationPlayer un jour, ce signal marchera
+	if anim_player and anim_player.has_signal("animation_finished") and not _connected:
+		anim_player.animation_finished.connect(_on_anim_finished)
+		_connected = true
 
 func _input(event: InputEvent) -> void:
 	handle_inputs(event)
 
 func handle_inputs(input_event: InputEvent) -> void:
-	# On mémorise la direction tenue pendant l’attaque
-	dir = Input.get_axis("left", "right")
+	last_dir = Input.get_axis("move_left", "move_right")
 
 func update(delta: float) -> void:
 	if not anim_player:
 		anim_player = player.get_animation_player()
-	# Optionnel: on oriente le sprite pendant l’attaque selon la dernière direction
-	if dir != 0.0:
-		player.facing_right = dir > 0
+	if last_dir != 0.0:
+		player.set_facing(last_dir > 0.0)
 
 func physics_update(delta: float) -> void:
-	# Reste immobile pendant l’attaque (petit amorti si jamais une vitesse restait)
+	# verrouille le déplacement horizontal
 	player.velocity.x = lerp(player.velocity.x, 0.0, 0.35)
 
 func exit() -> void:
-	# Nettoyage: on débranche le signal pour éviter les doubles connexions
-	if anim_player and anim_player.animation_finished.is_connected(_on_anim_finished):
-		anim_player.animation_finished.disconnect(_on_anim_finished)
+	if anim_player and anim_player.has_signal("animation_finished"):
+		if anim_player.animation_finished.is_connected(_on_anim_finished):
+			anim_player.animation_finished.disconnect(_on_anim_finished)
 	_connected = false
 
-func _on_anim_finished(anim_name: StringName) -> void:
-	# On ne réagit qu’à la fin de l’animation "Attack"
-	if anim_name != "Attack":
+func _on_anim_finished(anim_name: StringName = &"") -> void:
+	# Vrai si on est bien à la fin de l'anim d'attaque
+	var is_attack := true
+	if anim_player is AnimationPlayer:
+		is_attack = String(anim_name).to_lower() == "attack"
+	elif anim_player is AnimatedSprite2D:
+		# AnimatedSprite2D ne passe pas de nom d'anim au signal
+		# On vérifie donc l'anim courante
+		is_attack = anim_player.animation == "attack"
+
+	if not is_attack:
 		return
-	# Choix du prochain état: si une direction est tenue, on repart en Run, sinon Idle
-	var axis := Input.get_axis("left", "right")
+
+	var axis := Input.get_axis("move_left", "move_right")
 	var next := "PlayerRun" if abs(axis) > 0.0 else "PlayerIdle"
 	Transitioned.emit(self, next)
