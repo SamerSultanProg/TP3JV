@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://c766fl78o0cjk"]
+[gd_scene load_steps=4 format=3 uid="uid://c766fl78o0cjk"]
 
 [ext_resource type="PackedScene" uid="uid://co806t5p15df4" path="res://scenes/player.tscn" id="1_nnsk1"]
+[ext_resource type="Texture2D" uid="uid://cqvichlksctu0" path="res://assets/sprites/vecteezy_parallax-background-with-destroyed-city-street_14320066.jpg" id="2_rwgxs"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_f3sb7"]
 size = Vector2(600, 18)
@@ -22,3 +23,14 @@ offset_bottom = 23.0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 position = Vector2(246, 14)
 shape = SubResource("RectangleShape2D_f3sb7")
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.3, 0.3)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
+texture_repeat = 2
+position = Vector2(500, 70)
+scale = Vector2(0.665, 0.665)
+texture = ExtResource("2_rwgxs")
