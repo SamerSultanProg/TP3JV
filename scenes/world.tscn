@@ -28,9 +28,13 @@ shape = SubResource("RectangleShape2D_f3sb7")
 
 [node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
 motion_scale = Vector2(0.3, 0.3)
+motion_offset = Vector2(-200, 0)
+motion_mirroring = Vector2(600, 200)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
 texture_repeat = 2
 position = Vector2(500, 70)
 scale = Vector2(0.665, 0.665)
 texture = ExtResource("2_rwgxs")
+region_enabled = true
+region_rect = Rect2(0, 0, 1211.4736, 404)
