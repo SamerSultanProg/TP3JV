@@ -244,11 +244,11 @@ shape = SubResource("RectangleShape2D_4flbx")
 [node name="StateMachine" type="Node" parent="."]
 script = ExtResource("3_tuyoq")
 
-[node name="PlayerIdle" type="Node" parent="StateMachine"]
+[node name="Idle" type="Node" parent="StateMachine"]
 script = ExtResource("4_fjrip")
 
-[node name="PlayerRun" type="Node" parent="StateMachine"]
+[node name="Run" type="Node" parent="StateMachine"]
 script = ExtResource("5_smehm")
 
-[node name="PlayerAttack" type="Node" parent="StateMachine"]
+[node name="Attack" type="Node" parent="StateMachine"]
 script = ExtResource("6_ur7pv")
